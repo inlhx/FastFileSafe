@@ -1,38 +1,53 @@
 # FastFileSafe_保密文件加密工具
 
 #### 介绍
-Golang语言,使用AES+ZIP对文件进行加密压缩,支持跨平台linux,windows,macos等
-为企业解决公网传递保密文件带来安全隐患问题。
+为企业解决公网传递保密文件带来安全隐患问题
+
+针对Windows版本特别提供了注册表右键注入方案。
 
 #### 软件架构
-软件架构说明
-
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+Golang语言,使用AES+ZIP对文件进行加密压缩,支持跨平台linux,windows,macos等
+go version go1.17.7
 
 #### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+Windows 命令行模式:
+1.双击FastFileSafe.exe运行
+2.根据提示输入文件路径(可文件或目录)
+3.程序返回加密密钥,没密钥将永远无法打开文件
 
 
-#### 特技
+Windows右键模式:
+1.用文本工具打开右键注册.reg 
+2.修改F:\\golang\\git\\FastFileSafe\\   路径为FastFileSafe.exe目录位置
+3.双击"右键注册.reg"注册
+4.在文件或文件夹上右键可看见文件加密/解密 选项(如果是dooxb结尾的文件自动识别成解密模式)
+5.加密成功将会返回文件密钥,没密钥将永远无法打开文件
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+
+Linux或MacOS
+1.给文件赋权限chmod 755 FastFileSafe
+2.设置当前用户环境变量  ln -s /路径/FastFileSafe /usr/local/bin/
+3.  ./FastFileSafe /opt/xxx.jpg  进行文件加解密 (如果是dooxb结尾的文件自动识别成解密模式)
+
+#### 源码编译说明
+go mod vendor -v
+
+SET CGO_ENABLED=0
+SET GOARCH=amd64
+
+SET GOOS=darwin
+go build -o FastFileSafe-macos
+
+SET GOOS=linux
+go build -o FastFileSafe-linux
+
+
+SET GOOS=windows
+go build -ldflags "-H windows -w"
+
+SET GOOS=linux
+SET GOARCH=arm64
+go build -o FastFileSafe-linux-arm64
+
+
+或执行build.bat
