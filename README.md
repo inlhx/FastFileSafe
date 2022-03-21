@@ -7,6 +7,7 @@
 
 #### 软件架构
 Golang语言,使用AES+ZIP对文件进行加密压缩,支持跨平台linux,windows,macos等
+
 go version go1.17.7
 
 #### 使用说明
@@ -43,7 +44,7 @@ go build -o FastFileSafe-linux
 
 
 SET GOOS=windows
-go build -ldflags "-H windows -w"
+go build -ldflags "-w"
 
 SET GOOS=linux
 SET GOARCH=arm64
@@ -51,3 +52,7 @@ go build -o FastFileSafe-linux-arm64
 
 
 或执行build.bat
+
+
+###360等误报说明
+不知为什么打包后360一会儿就开始误报,大家不放心可以自己看源码自己打包也行,反正我这打包都是从官网下SDK.
