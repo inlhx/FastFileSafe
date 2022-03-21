@@ -22,6 +22,8 @@ import (
 	"strings"
 	"time"
 	"unsafe"
+
+	"github.com/atotto/clipboard"
 )
 
 var key []byte
@@ -177,7 +179,7 @@ func encryptFile(inputfile string, outputfile string) {
 	b, err := ioutil.ReadFile(inputfile) //Read the target file
 	if err != nil {
 		fmt.Printf("不能打开输入文件请检查!\n" + inputfile)
-		time.Sleep(10 * time.Second)
+		time.Sleep(3 * time.Second)
 		os.Exit(0)
 	}
 	ciphertext := encrypt(key, b)
@@ -185,7 +187,7 @@ func encryptFile(inputfile string, outputfile string) {
 	err = ioutil.WriteFile(outputfile, ciphertext, 0644)
 	if err != nil {
 		fmt.Printf("不能创建加密文件,请检查是否有创建文件权限!\n" + inputfile)
-		time.Sleep(10 * time.Second)
+		time.Sleep(3 * time.Second)
 		os.Exit(0)
 	}
 }
@@ -194,11 +196,11 @@ func encryptFile(inputfile string, outputfile string) {
 func decryptFile(inputfile string, outputfile string) {
 	z, err := ioutil.ReadFile(inputfile)
 	result := decrypt(key, z)
-	fmt.Printf("请检查是否有文件创建权限或权限为 0777\n")
+	// fmt.Printf("请检查是否有文件创建权限或权限为 0777\n")
 	err = ioutil.WriteFile(outputfile, result, 0777)
 	if err != nil {
 		fmt.Printf("文件解密失败!\n")
-		time.Sleep(10 * time.Second)
+		time.Sleep(3 * time.Second)
 		os.Exit(0)
 	}
 }
@@ -259,22 +261,30 @@ func decrypt(key, text []byte) []byte {
 	return decodeBase64(text)
 }
 
+// func barprocess() {
+// 	bar := progressbar.Default(100)
+// 	for i := 0; i < 100; i++ {
+// 		bar.Add(1)
+// 		time.Sleep(40 * time.Millisecond)
+// 	}
+// }
 func runMain(filePath string, isDeFile bool) {
-
+	// barprocess()
 	if isDeFile {
 		password := ""
-		fmt.Printf("\r\n欢迎使用文件加密工具,版本v1.0.0")
-		fmt.Printf("\r\ncreate by liuxiujun")
 		fmt.Printf("\r\n\r\n\r\n正在执行解密请输入文件密码:")
 		fmt.Scanf("%s", &password)
 		key = []byte(password)
 		dir, _ := os.Getwd()
 		defile := rand_str(20) + "dooxc"
+		fmt.Printf("defile" + defile)
 		decryptFile(filePath, defile)
 		DeCompress(defile, dir)
 		os.Remove(defile)
-		fmt.Printf("解密完成,3秒后自动关闭")
-		time.Sleep(3 * time.Second)
+		fmt.Printf("\r\n解密完成,1秒后自动关闭")
+		time.Sleep(1 * time.Second)
+		// fmt.Printf("\r\n\r\n\r\n\r\n按回车键关闭...")
+		fmt.Scanf(filePath)
 	} else {
 		createPrivKey()
 		f3, err := os.Open(filePath)
@@ -289,15 +299,19 @@ func runMain(filePath string, isDeFile bool) {
 		enfile := rand_str(20) + enfileType
 		encryptFile(dest, enfile)
 		os.Remove(dest)
+		var skey = bytes2str(key)
 		fmt.Printf("加密后文件名:" + enfile)
-		fmt.Printf("\r\n\r\n\r\n文件密码是:\n" + bytes2str(key) + "\n请妥善保管")
-
-		fmt.Printf("\r\n\r\n\r\n\r\n按任意键关闭...")
-		fmt.Scanf("%s", &filePath)
+		fmt.Printf("\r\n\r\n\r\n文件密码是:\n" + skey + "\n请妥善保管")
+		fmt.Printf("\r\n提示,密码已复制到剪切板!")
+		clipboard.WriteAll(skey)
+		fmt.Printf("\r\n\r\n\r\n\r\n按回车键关闭...")
+		fmt.Scanf(filePath)
 	}
 }
 
 func main() {
+	fmt.Printf("\r\n欢迎使用FastFileSafe(保密文件加密工具),版本v1.0.0")
+	fmt.Printf("\r\ncreate by lxj")
 	filePath := ""
 	if len(os.Args) < 2 {
 		fmt.Printf("\r\n\r\n\r\n\r\n请输入要加密/解密文件位置:")
